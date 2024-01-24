@@ -1,36 +1,36 @@
-from airflow.models.dag import DAG
+from airflow import DAG
 import datetime
 import pendulum
-from airflow.operators.bash import BashOperator
+from airflow.operators.bash import EmptyOperator
 
 with DAG(
-    dag_id="dags_bash_operator",
+    dag_id="dags_conn_test",
     schedule="0 0 * * *",
     start_date=pendulum.datetime(2024, 1, 1, tz="Asia/Seoul"),
     catchup=False,
 ) as dag:
-    t1 = BashOperator(
+    t1 = EmptyOperator(
         task_id="t1"
     )
-    t2 = BashOperator(
+    t2 = EmptyOperator(
         task_id="t2"
     )
-    t3 = BashOperator(
+    t3 = EmptyOperator(
         task_id="t3"
     )
-    t4 = BashOperator(
+    t4 = EmptyOperator(
         task_id="t4"
     )
-    t5 = BashOperator(
+    t5 = EmptyOperator(
         task_id="t5"
     )
-    t6 = BashOperator(
+    t6 = EmptyOperator(
         task_id="t6"
     )
-    t7 = BashOperator(
+    t7 = EmptyOperator(
         task_id="t7"
     )
-    t8 = BashOperator(
+    t8 = EmptyOperator(
         task_id="t8"
     )
 
