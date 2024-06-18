@@ -20,12 +20,19 @@ import os
 from datetime import datetime
 
 from airflow.models.dag import DAG
+from airflow.operators.python import PythonOperator
 from airflow.providers.slack.operators.slack_webhook import SlackWebhookOperator
 
 ENV_ID = os.environ.get("SYSTEM_TESTS_ENV_ID")
 DAG_ID = "slack_webhook_example_dag"
 SLACK_WEBHOOK_CONN_ID = os.environ.get("SLACK_WEBHOOK_CONN_ID", "slack_default")
 IMAGE_URL = "https://raw.githubusercontent.com/apache/airflow/main/airflow/www/static/pin_100.png"
+
+def log_current_time(**context):
+    current_time = datetime.now().time()
+    message = f"Current time is {current_time}"
+    print(message)
+    return message
 
 with DAG(
     dag_id=DAG_ID,
@@ -34,40 +41,22 @@ with DAG(
     max_active_runs=1,
     tags=["example"],
 ) as dag:
+    # 로그 메시지를 생성하는 PythonOperator
+    generate_log_message = PythonOperator(
+        task_id='generate_log_message',
+        python_callable=log_current_time,
+        provide_context=True,
+    )
+
     # [START slack_webhook_operator_text_howto_guide]
     slack_webhook_operator_text = SlackWebhookOperator(
         task_id="slack_webhook_send_text",
         slack_webhook_conn_id=SLACK_WEBHOOK_CONN_ID,
-        message=(
-            "Apache Airflow™ is an open-source platform for developing, "
-            "scheduling, and monitoring batch-oriented workflows."
-        ),
+        message="{{ task_instance.xcom_pull(task_ids='generate_log_message') }}",
     )
     # [END slack_webhook_operator_text_howto_guide]
 
-    # [START slack_webhook_operator_blocks_howto_guide]
-    slack_webhook_operator_blocks = SlackWebhookOperator(
-        task_id="slack_webhook_send_blocks",
-        slack_webhook_conn_id=SLACK_WEBHOOK_CONN_ID,
-        blocks=[
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": (
-                        "*<https://github.com/apache/airflow|Apache Airflow™>* "
-                        "is an open-source platform for developing, scheduling, "
-                        "and monitoring batch-oriented workflows."
-                    ),
-                },
-                "accessory": {"type": "image", "image_url": IMAGE_URL, "alt_text": "Pinwheel"},
-            }
-        ],
-        message="Fallback message",
-    )
-    # [END slack_webhook_operator_blocks_howto_guide]
-
-    slack_webhook_operator_text >> slack_webhook_operator_blocks
+    generate_log_message >> slack_webhook_operator_text
 
 from tests.system.utils import get_test_run  # noqa: E402
 
