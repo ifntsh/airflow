@@ -39,8 +39,6 @@ slack_alert = SlackWebhookOperator(
     task_id='send_slack_message',
     slack_webhook_conn_id='slack_webhook',  # Airflow connection 설정
     message="{{ task_instance.xcom_pull(task_ids='log_current_time') }}",
-    channel='#ttestt',  # 원하는 Slack 채널명
-    username='airflow',
     dag=dag,
 )
 
