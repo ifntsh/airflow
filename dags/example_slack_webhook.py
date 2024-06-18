@@ -17,7 +17,7 @@
 from __future__ import annotations
 
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from airflow.models.dag import DAG
 from airflow.operators.python import PythonOperator
@@ -36,9 +36,10 @@ def log_current_time(**context):
 
 with DAG(
     dag_id=DAG_ID,
-    schedule=None,
-    start_date=datetime(2021, 1, 1),
+    schedule_interval='@hourly',  # 매 시간 실행
+    start_date=datetime(2024, 6, 1),
     max_active_runs=1,
+    catchup=False,
     tags=["example"],
 ) as dag:
     # 로그 메시지를 생성하는 PythonOperator
@@ -58,7 +59,5 @@ with DAG(
 
     generate_log_message >> slack_webhook_operator_text
 
-from tests.system.utils import get_test_run  # noqa: E402
-
-# Needed to run the example DAG with pytest (see: tests/system/README.md#run_via_pytest)
-test_run = get_test_run(dag)
+if __name__ == "__main__":
+    dag.cli()
