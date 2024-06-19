@@ -1,0 +1,25 @@
+name: Crawler Test
+
+on:
+  schedule:
+    # KST 오전 11시 30분 -> UTC 오전 2시 30분, 평일에만 돌아감
+    - cron: "30 2 * * 1-5"
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+
+      - name: Lunch Time Notification
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_CHANNEL: random
+          SLACK_MESSAGE: '얼른 일어나세요!'
+          SLACK_TITLE: 점심시간입니다
+          SLACK_USERNAME: slackbot test
