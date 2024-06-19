@@ -30,6 +30,10 @@ jobs:
 
         mv NEW_README.md README.md
 
+    - name: Clean up
+      run: |
+        rm structure.txt structure_section.txt
+
     - name: Commit changes
       run: |
         git config --global user.name 'github-actions[bot]'
