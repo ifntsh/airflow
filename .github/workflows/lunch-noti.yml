@@ -1,22 +1,18 @@
-name: Crawler Test
+name: lunch-noti
 
 on:
   schedule:
     # KST 오전 11시 30분 -> UTC 오전 2시 30분, 평일에만 돌아감
     - cron: "30 2 * * 1-5"
 
-  workflow_dispatch:
-
 jobs:
-  test:
+  slackNotification:
+    name: Slack Notification
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout branch
-        uses: actions/checkout@v2
-
-      - name: Lunch Time Notification
-        uses: rtCamp/action-slack-notify@master
+      - uses: actions/checkout@v2
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: random
