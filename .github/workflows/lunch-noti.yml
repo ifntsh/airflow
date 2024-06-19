@@ -18,7 +18,7 @@ jobs:
       - name: Lunch Time Notification
         uses: rtCamp/action-slack-notify@master
         env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_CHANNEL: random
           SLACK_MESSAGE: '얼른 일어나세요!'
           SLACK_TITLE: 점심시간입니다
