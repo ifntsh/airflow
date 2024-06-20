@@ -16,15 +16,15 @@ jobs:
       - name: Generate directory tree
         run: |
           echo "# Project Directory Structure" > airflow/Readme.md
-          echo "\`\`\`" >> airflow/Readme.md
+          echo "\`\`\`" >> airflow/README.md
           ./airflow/.github/workflows/update_readme.sh >> airflow/Readme.md
-          echo "\`\`\`" >> airflow/Readme.md
+          echo "\`\`\`" >> airflow/README.md
 
       - name: Commit changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add airflow/Readme.md
+          git add airflow/README.md
           git commit -m "Update Readme with directory tree [skip ci]"
       
       - name: Push changes
