@@ -1,4 +1,4 @@
-name: Slack Notification Demo
+name: repo-update-slack-notify
 
 on:
   push:
