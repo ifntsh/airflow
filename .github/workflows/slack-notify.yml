@@ -1,6 +1,6 @@
 name: Slack Notification Demo
 
-on: push
+# on: push
 
 jobs:
   slackNotification:
