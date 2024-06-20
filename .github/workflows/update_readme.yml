@@ -3,31 +3,38 @@ name: Update README with Directory Tree
 on:
   push:
     branches:
-      - main  # 메인 브랜치에 push 이벤트가 발생할 때 실행
+      - main  # main 브랜치에 푸시될 때 실행 (다른 브랜치로 변경 가능)
 
 jobs:
-  update-readme:
+  build:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Generate directory tree
+        
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'  # 사용하는 파이썬 버전에 맞게 설정
+        
+      - name: Install tree command (if needed)
         run: |
-          echo "# Project Directory Structure" > airflow/README.md
-          echo "\`\`\`" >> airflow/README.md
-          ./airflow/.github/workflows/update_readme.sh >> airflow/README.md
-          echo "\`\`\`" >> airflow/README.md
-
-      - name: Commit changes
+          sudo apt-get update && sudo apt-get install tree  # tree 명령어 설치
+          
+      - name: Generate Directory Tree
+        run: |
+          echo "# Project Directory Structure" > README.md
+          echo "\`\`\`" >> README.md
+          tree --dirsfirst -L 2 >> README.md  # 디렉토리 구조를 README.md에 추가
+          echo "\`\`\`" >> README.md
+          
+      - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add airflow/README.md
-          git commit -m "Update README with directory tree [skip ci]"
-      
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git add README.md
+          git commit -m "Update README.md with directory tree [skip ci]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
