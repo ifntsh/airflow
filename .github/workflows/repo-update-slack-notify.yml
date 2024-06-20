@@ -18,6 +18,8 @@ on:
     types: [in_progress, queued, success, failure]
   workflow_run:
     types: [completed]
+  workflow_dispatch:
+
 
 jobs:
   slackNotification:
