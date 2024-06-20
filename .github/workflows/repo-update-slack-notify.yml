@@ -8,8 +8,6 @@ on:
     types: [opened, closed, reopened, edited, assigned, unassigned, labeled, unlabeled]
   issue_comment:
     types: [created, edited, deleted]
-  star:
-    types: [created]
   fork:
     types: [created]
   deployment:
