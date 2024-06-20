@@ -36,7 +36,10 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add README.md
-          git commit -m "Update README.md with directory tree [skip ci]"
-          git push
+          if ! git diff --cached --quiet; then
+            git commit -m "Update README.md with directory tree [skip ci]"
+            git push
+          else
+            echo "No changes to commit"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
