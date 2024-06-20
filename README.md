@@ -1,3 +1,17 @@
-# airflow
+# Project Directory Structure
+```
+.
+├── dags
+│   ├── dags_bash_operator.py
+│   ├── dags_bash_select_fruit.py
+│   ├── dags_conn_test.py
+│   ├── dags_python_operator.py
+│   ├── example_slack_webhook.py
+│   ├── simple_daily_logging.py
+│   └── simple_hourly_logging.py
+├── plugins
+│   └── shell
+└── README.md
 
-![image](https://github.com/ifntsh/airflow/assets/99662127/f03c9327-a8b9-4e2c-860d-f4e561d9d1af)
+3 directories, 8 files
+```
