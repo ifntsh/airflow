@@ -14,8 +14,6 @@ on:
     types: [created]
   deployment_status:
     types: [in_progress, queued, success, failure]
-  workflow_run:
-    types: [completed]
   workflow_dispatch:
 
 
