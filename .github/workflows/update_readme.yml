@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main  # main 브랜치에 푸시될 때 실행 (다른 브랜치로 변경 가능)
+  workflow_dispatch:
+      
 
 jobs:
   build:
