@@ -1,0 +1,29 @@
+name: repo-update-slack-notify
+
+on:
+  push:
+  pull_request:
+    types: [opened, closed, reopened, synchronized, edited, assigned, unassigned, labeled, unlabeled, review_requested, review_request_removed, ready_for_review]
+  issues:
+    types: [opened, closed, reopened, edited, assigned, unassigned, labeled, unlabeled]
+  issue_comment:
+    types: [created, edited, deleted]
+  fork:
+    types: [created]
+  deployment:
+    types: [created]
+  deployment_status:
+    types: [in_progress, queued, success, failure]
+  workflow_dispatch:
+
+
+jobs:
+  slackNotification:
+    name: Slack Notification
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Send Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.REPO_UPDATE_SLACK_NOTIFY }}

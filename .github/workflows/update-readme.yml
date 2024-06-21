@@ -1,9 +1,10 @@
-name: Update README with Directory Tree
+name: update-readme
 
 on:
   push:
     branches:
       - main  # main 브랜치에 푸시될 때 실행 (다른 브랜치로 변경 가능)
+  workflow_dispatch:
 
 jobs:
   build:
@@ -34,7 +35,11 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add README.md
-          git commit -m "Update README.md with directory tree [skip ci]"
-          git push
+          if ! git diff --cached --quiet; then
+            git commit -m "Update README.md with directory tree [skip ci]"
+            git push
+          else
+            echo "No changes to commit"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
