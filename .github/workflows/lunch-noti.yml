@@ -20,3 +20,4 @@ jobs:
           SLACK_MESSAGE: '얼른 일어나세요!'
           SLACK_TITLE: 점심시간입니다
           SLACK_USERNAME: slackbot test
+          
