@@ -1,22 +1,22 @@
-name: lunch-noti
+# name: lunch-noti
 
-on:
-  schedule:
-    # KST 오전 11시 30분 -> UTC 오전 2시 30분, 평일에만 돌아감
-    # - cron: "25 2 * * 1-5"
-    - cron: "*/1 * * * 1-5"
-  workflow_dispatch:
+# on:
+#   schedule:
+#     # KST 오전 11시 30분 -> UTC 오전 2시 30분, 평일에만 돌아감
+#     # - cron: "25 2 * * 1-5"
+#     - cron: "*/1 * * * 1-5"
+#   workflow_dispatch:
 
-jobs:
-  slackNotification:
-    name: Slack Notification
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Slack Notification
-        uses: rtCamp/action-slack-notify@v2
-        env:
-          SLACK_WEBHOOK: ${{ secrets.LUNCH_BOT }}
-          SLACK_MESSAGE: '얼른 일어나세요!'
-          SLACK_TITLE: 점심시간입니다. 
+# jobs:
+#   slackNotification:
+#     name: Slack Notification
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Slack Notification
+#         uses: rtCamp/action-slack-notify@v2
+#         env:
+#           SLACK_WEBHOOK: ${{ secrets.LUNCH_BOT }}
+#           SLACK_MESSAGE: '얼른 일어나세요!'
+#           SLACK_TITLE: 점심시간입니다. 
           
