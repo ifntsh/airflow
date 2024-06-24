@@ -3,7 +3,7 @@ from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.providers.slack.operators.slack_webhook import SlackWebhookOperator
 
 import os
-from datetime import datetime, date, time
+from datetime import datetime, time
 import pytz
 
 ENV_ID = os.environ.get("SYSTEM_TESTS_ENV_ID")
@@ -12,8 +12,9 @@ SLACK_WEBHOOK_CONN_ID = os.environ.get("SLACK_WEBHOOK_CONN_ID", "slack_webhook")
 KST = pytz.timezone('Asia/Seoul')
 
 def log_current_time(**context):
-    current_time = datetime.now(KST).time()
-    message = f":slack: KST time is {current_time}"
+    now_utc = datetime.utcnow()
+    now_kst = datetime.now(KST)
+    message = f":slack: UTC time is {now_utc.time()}, KST time is {now_kst.time()}"
     print(message)
     return message
 
@@ -36,10 +37,10 @@ def task_fail_slack_alert(context):
     return failed_alert.execute(context=context)
 
 def is_weekday_working_hours():
-    now = datetime.now(KST)
+    now_kst = datetime.now(KST)
     start_time = time(6, 0)  # 06:00 AM KST
     end_time = time(22, 0)  # 10:00 PM KST
-    if now.weekday() < 5 and start_time <= now.time() <= end_time:
+    if now_kst.weekday() < 5 and start_time <= now_kst.time() <= end_time:
         return 'generate_log_message'
     else:
         return 'skip_task'
