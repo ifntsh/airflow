@@ -12,7 +12,7 @@ SLACK_WEBHOOK_CONN_ID = os.environ.get("SLACK_WEBHOOK_CONN_ID", "slack_webhook")
 KST = pytz.timezone('Asia/Seoul')
 
 def log_current_time(**context):
-    now_utc = datetime.utcnow()
+    now_utc = datetime()
     now_kst = datetime.now(KST)
     message = f":slack: UTC time is {now_utc.time()}, KST time is {now_kst.time()}"
     print(message)
