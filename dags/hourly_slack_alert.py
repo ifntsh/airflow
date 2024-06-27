@@ -39,7 +39,7 @@ def task_fail_slack_alert(context):
 def is_weekday_working_hours():
     now_kst = datetime.now(KST)
     start_time = time(6, 0)  # 06:00 AM KST
-    end_time = time(22, 0)  # 10:00 PM KST
+    end_time = time(23, 0)  # 10:00 PM KST
     if now_kst.weekday() < 5 and start_time <= now_kst.time() <= end_time:
         return 'generate_log_message'
     else:
@@ -47,7 +47,7 @@ def is_weekday_working_hours():
 
 with DAG(
     dag_id=DAG_ID,
-    schedule_interval='@hourly',  # 매 시간 실행
+    schedule_interval='50 * * * *',  # 매 시간 실행
     start_date=datetime(2024, 6, 1),
     max_active_runs=1,
     catchup=False,
