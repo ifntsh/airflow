@@ -7,14 +7,14 @@ from datetime import datetime, time
 import pytz
 
 ENV_ID = os.environ.get("SYSTEM_TESTS_ENV_ID")
-DAG_ID = "hourly_slack_alert"  # DAG ID 변경
+DAG_ID = "hourly_slack_alert"
 SLACK_WEBHOOK_CONN_ID = os.environ.get("SLACK_WEBHOOK_CONN_ID", "slack_webhook")
 KST = pytz.timezone('Asia/Seoul')
 
 def log_current_time(**context):
-    now_utc = datetime.now()
-    now_kst = datetime.now(KST)
-    message = f":slack: UTC time is {now_utc.time()}, KST time is {now_kst.time()}"
+    now_utc = datetime.now().strftime('%H:%M:%S')
+    now_kst = datetime.now(KST).strftime('%H:%M:%S')
+    message = f":slack: UTC time is {now_utc}, KST time is {now_kst}"
     print(message)
     return message
 
@@ -47,7 +47,7 @@ def is_weekday_working_hours():
 
 with DAG(
     dag_id=DAG_ID,
-    schedule_interval='50 * * * *',  # 매 시간 실행
+    schedule_interval='50 * * * *', 
     start_date=datetime(2024, 6, 1),
     max_active_runs=1,
     catchup=False,
