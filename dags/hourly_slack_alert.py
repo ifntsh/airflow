@@ -3,7 +3,7 @@ from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.providers.slack.operators.slack_webhook import SlackWebhookOperator
 
 import os
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 import pytz
 
 ENV_ID = os.environ.get("SYSTEM_TESTS_ENV_ID")
@@ -13,8 +13,16 @@ KST = pytz.timezone('Asia/Seoul')
 
 def log_current_time(**context):
     now_utc = datetime.now().strftime('%H:%M:%S')
-    now_kst = datetime.now(KST).strftime('%H:%M:%S')
-    message = f":slack: UTC time is {now_utc}, KST time is {now_kst}"
+    now_kst = datetime.now(KST)
+    now_kst_str = now_kst.strftime('%H:%M:%S')
+
+    end_of_work_day = datetime.now(KST).replace(hour=17, minute=0, second=0, microsecond=0)
+    if now_kst > end_of_work_day:
+        end_of_work_day += timedelta(days=1)
+        
+    minutes_until_end_of_day = int((end_of_work_day - now_kst).total_seconds() // 60)
+
+    message = f":slack: UTC time is {now_utc}, KST time is {now_kst_str}. {minutes_until_end_of_day} minutes left until 5 PM KST."
     print(message)
     return message
 
