@@ -24,8 +24,9 @@ def log_current_time(**context):
     hours_until_end_of_day, remainder = divmod(time_until_end_of_day.seconds, 3600)
     minutes_until_end_of_day = remainder // 60
 
-    message = (f":slack: UTC time is {now_utc}, KST time is {now_kst_str}. "
-               f"{hours_until_end_of_day} hours {minutes_until_end_of_day} minutes left until 5 PM KST.")
+    message = (f":slack: UTC time is {now_utc}, KST time is {now_kst_str}.\n"
+               f"{hours_until_end_of_day} hours {minutes_until_end_of_day} minutes "
+               "left until 5 PM KST.")
     print(message)
     return message
 
@@ -50,7 +51,7 @@ def task_fail_slack_alert(context):
 def is_weekday_working_hours():
     now_kst = datetime.now(KST)
     start_time = time(6, 0)  # 06:00 AM KST
-    end_time = time(21, 0)  # 11:00 PM KST
+    end_time = time(23, 0)  # 11:00 PM KST
     if now_kst.weekday() < 5 and start_time <= now_kst.time() <= end_time:
         return 'generate_log_message'
     else:
