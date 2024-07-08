@@ -24,7 +24,7 @@ def log_current_time(**context):
     hours_until_end_of_day, remainder = divmod(time_until_end_of_day.seconds, 3600)
     minutes_until_end_of_day = remainder // 60
 
-    message = (f":slack: UTC time is {now_utc}, KST time is {now_kst_str}.\n"
+    message = (f":timer_clock: UTC : {now_utc} / KST : {now_kst_str}\n"
                f"{hours_until_end_of_day} hours {minutes_until_end_of_day} minutes "
                "left until 5 PM KST.")
     print(message)
