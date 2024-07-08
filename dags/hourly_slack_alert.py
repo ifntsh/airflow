@@ -7,8 +7,7 @@ from datetime import datetime, time, timedelta
 import pytz
 
 ENV_ID = os.environ.get("SYSTEM_TESTS_ENV_ID")
-DAG_ID_MORNING = "hourly_slack_alert_morning"
-DAG_ID_EVENING = "hourly_slack_alert_evening"
+DAG_ID = "hourly_slack_alert"
 SLACK_WEBHOOK_CONN_ID = os.environ.get("SLACK_WEBHOOK_CONN_ID", "slack_webhook")
 KST = pytz.timezone('Asia/Seoul')
 
@@ -58,10 +57,9 @@ def is_weekday_working_hours():
     else:
         return 'skip_task'
 
-# Morning DAG: 00:00 to 09:00 KST (15:00 to 00:00 UTC)
 with DAG(
-    dag_id=DAG_ID_MORNING,
-    schedule_interval='0 0-9 * * *',  # 00:00 to 09:00 KST
+    dag_id=DAG_ID,
+    schedule_interval='50 0-9,22-23 * * *', 
     start_date=datetime(2024, 6, 1),
     max_active_runs=1,
     catchup=False,
@@ -69,65 +67,28 @@ with DAG(
     default_args={
         'on_failure_callback': task_fail_slack_alert,
     }
-) as dag_morning:
-    check_time_morning = BranchPythonOperator(
-        task_id='check_time_morning',
+) as dag:
+    check_time = BranchPythonOperator(
+        task_id='check_time',
         python_callable=is_weekday_working_hours,
     )
 
-    generate_log_message_morning = PythonOperator(
-        task_id='generate_log_message_morning',
+    generate_log_message = PythonOperator(
+        task_id='generate_log_message',
         python_callable=log_current_time,
         provide_context=True,
     )
 
-    skip_task_morning = PythonOperator(
-        task_id='skip_task_morning',
+    skip_task = PythonOperator(
+        task_id='skip_task',
         python_callable=lambda: print("Skipping task because it's outside of working hours or it's the weekend"),
     )
 
-    slack_webhook_operator_text_morning = SlackWebhookOperator(
-        task_id="slack_webhook_send_text_morning",
+    slack_webhook_operator_text = SlackWebhookOperator(
+        task_id="slack_webhook_send_text",
         slack_webhook_conn_id=SLACK_WEBHOOK_CONN_ID,
-        message="{{ task_instance.xcom_pull(task_ids='generate_log_message_morning') }}",
+        message="{{ task_instance.xcom_pull(task_ids='generate_log_message') }}",
     )
 
-    check_time_morning >> [generate_log_message_morning, skip_task_morning]
-    generate_log_message_morning >> slack_webhook_operator_text_morning
-
-# Evening DAG: 21:00 to 23:59 KST (12:00 to 14:59 UTC)
-with DAG(
-    dag_id=DAG_ID_EVENING,
-    schedule_interval='0 12-14 * * *',  # 21:00 to 23:59 KST
-    start_date=datetime(2024, 6, 1),
-    max_active_runs=1,
-    catchup=False,
-    tags=["example"],
-    default_args={
-        'on_failure_callback': task_fail_slack_alert,
-    }
-) as dag_evening:
-    check_time_evening = BranchPythonOperator(
-        task_id='check_time_evening',
-        python_callable=is_weekday_working_hours,
-    )
-
-    generate_log_message_evening = PythonOperator(
-        task_id='generate_log_message_evening',
-        python_callable=log_current_time,
-        provide_context=True,
-    )
-
-    skip_task_evening = PythonOperator(
-        task_id='skip_task_evening',
-        python_callable=lambda: print("Skipping task because it's outside of working hours or it's the weekend"),
-    )
-
-    slack_webhook_operator_text_evening = SlackWebhookOperator(
-        task_id="slack_webhook_send_text_evening",
-        slack_webhook_conn_id=SLACK_WEBHOOK_CONN_ID,
-        message="{{ task_instance.xcom_pull(task_ids='generate_log_message_evening') }}",
-    )
-
-    check_time_evening >> [generate_log_message_evening, skip_task_evening]
-    generate_log_message_evening >> slack_webhook_operator_text_evening
+    check_time >> [generate_log_message, skip_task]
+    generate_log_message >> slack_webhook_operator_text
