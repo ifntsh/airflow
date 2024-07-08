@@ -56,10 +56,10 @@ def is_weekday_working_hours():
         return 'generate_log_message'
     else:
         return 'skip_task'
-
+        
 with DAG(
     dag_id=DAG_ID,
-    schedule_interval='50 * * * *', 
+    schedule_interval='0 21-9 * * *', 
     start_date=datetime(2024, 6, 1),
     max_active_runs=1,
     catchup=False,
