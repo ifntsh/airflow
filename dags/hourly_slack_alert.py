@@ -24,7 +24,7 @@ def log_current_time(**context):
     hours_until_end_of_day, remainder = divmod(time_until_end_of_day.seconds, 3600)
     minutes_until_end_of_day = remainder // 60
 
-    message = (f"On-Time Alarm :timer_clock: \n UTC : {now_utc} / KST : {now_kst_str}\n"
+    message = (f"On-Time Alarm :timer_clock: \nUTC : {now_utc} / KST : {now_kst_str}\n"
                f"{hours_until_end_of_day} hours {minutes_until_end_of_day} minutes "
                "left until 5 PM KST.")
     print(message)
@@ -88,6 +88,7 @@ with DAG(
         task_id="slack_webhook_send_text",
         slack_webhook_conn_id=SLACK_WEBHOOK_CONN_ID,
         message="{{ task_instance.xcom_pull(task_ids='generate_log_message') }}",
+        username='on-time'  # 여기에 원하는 봇 이름을 설정하세요
     )
 
     check_time >> [generate_log_message, skip_task]
