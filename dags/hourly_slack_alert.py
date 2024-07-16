@@ -59,7 +59,7 @@ def is_weekday_working_hours():
 
 with DAG(
     dag_id=DAG_ID,
-    schedule_interval='0,50 0-9,22-23 * * *', 
+    schedule_interval='0,50 0-7,22-23 * * *', 
     start_date=datetime(2024, 6, 1),
     max_active_runs=1,
     catchup=False,
