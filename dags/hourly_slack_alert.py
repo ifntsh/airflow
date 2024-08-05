@@ -52,10 +52,13 @@ def is_weekday_working_hours():
     now_kst = datetime.now(KST)
     start_time = time(6, 0)  # 06:00 AM KST
     end_time = time(23, 0)  # 11:00 PM KST
-    if now_kst.weekday() < 5 and start_time <= now_kst.time() <= end_time:
-        return 'generate_log_message'
-    else:
-        return 'skip_task'
+    exclude_start_time = time(11, 30)  # 11:30 AM KST
+    exclude_end_time = time(12, 50)  # 12:50 PM KST
+    if now_kst.weekday() < 5:
+        if start_time <= now_kst.time() <= end_time:
+            if not (exclude_start_time <= now_kst.time() <= exclude_end_time):
+                return 'generate_log_message'
+    return 'skip_task'
 
 with DAG(
     dag_id=DAG_ID,
@@ -88,7 +91,7 @@ with DAG(
         task_id="slack_webhook_send_text",
         slack_webhook_conn_id=SLACK_WEBHOOK_CONN_ID,
         message="{{ task_instance.xcom_pull(task_ids='generate_log_message') }}",
-        username='on-time'  # 여기에 원하는 봇 이름을 설정하세요
+        username='on-time' 
     )
 
     check_time >> [generate_log_message, skip_task]
