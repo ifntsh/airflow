@@ -50,7 +50,7 @@ def task_fail_slack_alert(context):
 
 def is_weekday_working_hours():
     now_kst = datetime.now(KST)
-    start_time = time(6, 0)  # 06:00 AM KST
+    start_time = time(7, 0)  # 07:00 AM KST
     end_time = time(23, 0)  # 11:00 PM KST
     exclude_start_time = time(11, 30)  # 11:30 AM KST
     exclude_end_time = time(12, 50)  # 12:50 PM KST
