@@ -54,11 +54,20 @@ def is_weekday_working_hours():
     end_time = time(23, 0)  # 11:00 PM KST
     exclude_start_time = time(11, 30)  # 11:30 AM KST
     exclude_end_time = time(12, 50)  # 12:50 PM KST
+    
+    # 금요일 체크
+    if now_kst.weekday() == 4:  # 4는 금요일에 해당
+        # 현재 주의 날짜를 확인하여 둘째 주 또는 넷째 주인지 확인
+        if 7 <= now_kst.day <= 13 or 21 <= now_kst.day <= 27:
+            end_time = time(16, 0)  # 오후 4시까지로 제한
+    
     if now_kst.weekday() < 5:
         if start_time <= now_kst.time() <= end_time:
             if not (exclude_start_time <= now_kst.time() <= exclude_end_time):
                 return 'generate_log_message'
+    
     return 'skip_task'
+
 
 with DAG(
     dag_id=DAG_ID,
