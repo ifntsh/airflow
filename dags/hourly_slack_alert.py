@@ -70,7 +70,7 @@ def is_weekday_working_hours():
 
 with DAG(
     dag_id=DAG_ID,
-    schedule_interval='50 22-23,0-7 * * *',  # 22:50 UTC부터 07:50 UTC까지 => 07:50 KST부터 16:50 KST까지
+    schedule_interval='0,50 22-23,0-7 * * *',  # 22:50 UTC부터 07:50 UTC까지 => 07:50 KST부터 16:50 KST까지
     start_date=datetime(2024, 6, 1, 22, 50),  # 첫 실행을 맞추기 위해 start_date도 22:50로 설정
     max_active_runs=1,
     catchup=False,
