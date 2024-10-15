@@ -15,7 +15,7 @@ KST = pytz.timezone('Asia/Seoul')
 # DAG 선언
 with DAG(
     dag_id=DAG_ID,
-    schedule_interval='0,50 22-23,0-7 * * *',  # 22:00-23:50, 00:00-07:50 UTC => 07:00-16:50 KST
+    schedule_interval='50 22-23,0-7 * * *',  # 22:00-23:50, 00:00-07:50 UTC => 07:00-16:50 KST
     start_date=datetime(2024, 6, 1, 22, 0),  # 첫 실행을 맞추기 위해 start_date도 22:00 UTC로 설정
     max_active_runs=1,
     catchup=False,
