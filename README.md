@@ -12,6 +12,7 @@
 │   ├── dags_bash_operator.py
 │   ├── dags_bash_select_fruit.py
 │   ├── dags_conn_test.py
+│   ├── dags_email_operator.py
 │   ├── dags_python_operator.py
 │   ├── example_slack_webhook.py
 │   ├── hourly_slack_alert.py
@@ -23,5 +24,5 @@
 ├── .gitignore
 └── README.md
 
-7 directories, 15 files
+6 directories, 16 files
 ```
