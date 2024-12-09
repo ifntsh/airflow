@@ -16,10 +16,22 @@ def fetch_json_data(**kwargs):
     response = requests.get(url)
     response.raise_for_status()
     data = response.json()
-    return data
+    
+    # XCom을 통해 데이터를 반환하여 후속 태스크에서 사용할 수 있게 함
+    kwargs['ti'].xcom_push(key='json_data', value=data)
 
 # JSON 데이터를 GCS에 업로드하는 함수
-def upload_to_gcs(json_data, bucket_name, gcs_file_path, **kwargs):
+def upload_to_gcs(**kwargs):
+    # XCom에서 JSON 데이터를 가져옴
+    json_data = kwargs['ti'].xcom_pull(task_ids='fetch_json_data', key='json_data')
+    
+    if not json_data:
+        raise ValueError("No data found to upload.")
+
+    # GCS 버킷 이름을 Airflow Variable에서 가져옴
+    bucket_name = Variable.get("kosis_api_test_bucket")  # Airflow Variable에서 버킷 이름 가져오기
+    gcs_file_path = 'kosis_data.json'  # GCS 내 최상위 경로에 파일 저장
+
     # GCS Hook 사용
     hook = GCSHook(gcp_conn_id='google_cloud_default')
     
@@ -44,7 +56,7 @@ default_args = {
 
 # DAG 정의
 with DAG(
-    'kosis_test',
+    'kosis_test',  # DAG 이름
     default_args=default_args,
     description='Fetch JSON data and upload to GCS',
     schedule_interval='@daily',
@@ -63,12 +75,7 @@ with DAG(
     upload_to_gcs_task = PythonOperator(
         task_id='upload_to_gcs',
         python_callable=upload_to_gcs,
-        op_kwargs={
-            'bucket_name': 'kosis_api_test',  # GCS 버킷 이름
-            'gcs_file_path': 'kosis_data.json',  # GCS 내 최상위 경로에 파일 저장
-        },
         provide_context=True,
     )
     
-    # 의존성 설정: fetch_json_task가 먼저 실행되고, upload_to_gcs_task가 그 다음에 실행되도록 설정
     fetch_json_task >> upload_to_gcs_task
