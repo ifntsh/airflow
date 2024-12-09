@@ -38,7 +38,7 @@ default_args = {
 
 # DAG 정의
 with DAG(
-    'fetch_and_process_json_with_variable',
+    'kosis_test',
     default_args=default_args,
     description='Fetch and process JSON data from API using Airflow Variables',
     schedule_interval='@daily',
