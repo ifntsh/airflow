@@ -44,7 +44,7 @@ default_args = {
 
 # DAG 정의
 with DAG(
-    'fetch_and_upload_to_gcs',
+    'kosis_test',
     default_args=default_args,
     description='Fetch JSON data and upload to GCS',
     schedule_interval='@daily',
