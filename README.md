@@ -15,8 +15,8 @@
 │   ├── dags_email_operator.py
 │   ├── dags_python_operator.py
 │   ├── example_slack_webhook.py
-│   ├── fetch_and_process_json_with_variable.py
 │   ├── hourly_slack_alert.py
+│   ├── kosis_test.py
 │   ├── simple_daily_logging.py
 │   └── simple_hourly_logging.py
 ├── plugins
