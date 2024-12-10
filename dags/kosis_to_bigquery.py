@@ -11,10 +11,14 @@ from airflow.models import Variable
 
 # JSON 데이터를 API에서 가져오는 함수
 def fetch_json_data(**kwargs):
-    api_key = Variable.get("api_key")  # Airflow Variable에서 API Key 가져오기
-    url = f"https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey={api_key}&itmId=13103112873NO_ACCI+13103112873NO_DEATH+13103112873NO_WOUND+&objL1=ALL&objL2=ALL&objL3=&objL4=&objL5=&objL6=&objL7=&objL8=&format=json&jsonVD=Y&prdSe=Y&newEstPrdCnt=10000&prdInterval=1&orgId=132&tblId=DT_V_MOTA_021"
+    # 기본 URL 및 API Key 가져오기
+    base_url = Variable.get("api_url")
+    api_key = Variable.get("api_key")
+
+    # URL 동적으로 구성
+    api_url = f"{base_url}&apiKey={api_key}"
     
-    response = requests.get(url)
+    response = requests.get(api_url)
     response.raise_for_status()
     data = response.json()
     
