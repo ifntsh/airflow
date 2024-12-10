@@ -100,6 +100,7 @@ with DAG(
                 "writeDisposition": "WRITE_TRUNCATE",  # 기존 데이터 덮어쓰기
                 "fieldDelimiter": ",",
                 "encoding": "UTF-8",
+                "autodetect": True,  # 스키마 자동 감지 추가
             }
         },
         gcp_conn_id='google_cloud_default',
