@@ -1,15 +1,15 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from google.cloud import storage
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
+from google.cloud import storage
+from airflow.models import Variable
 from datetime import datetime, timedelta
 import requests
 import json
-from airflow.models import Variable
+import csv
 
-# JSON 데이터를 API에서 가져오는 함수
 def fetch_json_data(**kwargs):
-    api_key = Variable.get("api_key")  # Airflow Variable에서 API Key 가져오기
+    api_key = Variable.get("api_key")
     url = f"https://kosis.kr/openapi/Param/statisticsParameterData.do?method=getList&apiKey={api_key}&itmId=13103112873NO_ACCI+13103112873NO_DEATH+13103112873NO_WOUND+&objL1=ALL&objL2=ALL&objL3=&objL4=&objL5=&objL6=&objL7=&objL8=&format=json&jsonVD=Y&prdSe=Y&newEstPrdCnt=3&orgId=132&tblId=DT_V_MOTA_021"
     
     response = requests.get(url)
@@ -19,28 +19,32 @@ def fetch_json_data(**kwargs):
     # XCom을 통해 데이터를 반환하여 후속 태스크에서 사용할 수 있게 함
     kwargs['ti'].xcom_push(key='json_data', value=data)
 
-# JSON 데이터를 GCS에 업로드하는 함수
-def upload_to_gcs(**kwargs):
+def upload_json_to_csv_gcs(**kwargs):
     # XCom에서 JSON 데이터를 가져옴
     json_data = kwargs['ti'].xcom_pull(task_ids='fetch_json_data', key='json_data')
     
     if not json_data:
         raise ValueError("No data found to upload.")
 
-    # GCS 버킷 이름을 Airflow Variable에서 가져옴
+    # GCS 버킷 이름과 파일 경로
     bucket_name = Variable.get("kosis_api_test_bucket")  # Airflow Variable에서 버킷 이름 가져오기
-    gcs_file_path = 'kosis_data.json'  # GCS 내 최상위 경로에 파일 저장
+    gcs_file_path = 'kosis_data.csv'  # GCS 내 파일 경로
 
-    # GCS Hook 사용
+    # CSV 파일로 변환
+    local_csv_file_path = '/tmp/kosis_data.csv'  # 로컬 임시 경로
+    with open(local_csv_file_path, 'w', newline='', encoding='utf-8') as csv_file:
+        writer = csv.writer(csv_file)
+        # 헤더 추출
+        if json_data and isinstance(json_data, list):
+            headers = json_data[0].keys()  # 첫 번째 항목의 키를 헤더로 사용
+            writer.writerow(headers)
+            # 데이터 작성
+            for item in json_data:
+                writer.writerow(item.values())
+
+    # GCS Hook을 사용하여 업로드
     hook = GCSHook(gcp_conn_id='google_cloud_default')
-    
-    # 데이터를 JSON 파일로 저장
-    local_file_path = '/tmp/kosis_data.json'  # 임시 로컬 파일에 저장
-    with open(local_file_path, 'w') as f:
-        json.dump(json_data, f, indent=4)
-    
-    # GCS에 업로드
-    hook.upload(bucket_name, gcs_file_path, local_file_path)
+    hook.upload(bucket_name, gcs_file_path, local_csv_file_path)
     print(f"File uploaded to GCS: gs://{bucket_name}/{gcs_file_path}")
 
 # 기본 DAG 설정
@@ -55,9 +59,9 @@ default_args = {
 
 # DAG 정의
 with DAG(
-    'kosis_test',  # DAG 이름
+    'kosis_test_csv_upload',
     default_args=default_args,
-    description='Fetch JSON data and upload to GCS',
+    description='Fetch JSON data, convert to CSV, and upload to GCS',
     schedule_interval='@daily',
     start_date=datetime(2024, 1, 1),
     catchup=False,
@@ -67,14 +71,14 @@ with DAG(
     fetch_json_task = PythonOperator(
         task_id='fetch_json_data',
         python_callable=fetch_json_data,
-        op_kwargs={'parent_id': 'A'},
-    )
-    
-    # GCS에 업로드하기
-    upload_to_gcs_task = PythonOperator(
-        task_id='upload_to_gcs',
-        python_callable=upload_to_gcs,
         provide_context=True,
     )
     
-    fetch_json_task >> upload_to_gcs_task
+    # CSV로 변환 후 GCS에 업로드하기
+    upload_csv_task = PythonOperator(
+        task_id='upload_json_to_csv_gcs',
+        python_callable=upload_json_to_csv_gcs,
+        provide_context=True,
+    )
+    
+    fetch_json_task >> upload_csv_task
