@@ -59,7 +59,7 @@ default_args = {
 
 # DAG 정의
 with DAG(
-    'kosis_test_csv_upload',
+    'kosis_test',
     default_args=default_args,
     description='Fetch JSON data, convert to CSV, and upload to GCS',
     schedule_interval='@daily',
