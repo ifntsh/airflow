@@ -20,12 +20,13 @@
 │   ├── kosis_to_bigquery.py
 │   ├── kosis_upload.py
 │   ├── simple_daily_logging.py
-│   └── simple_hourly_logging.py
+│   ├── simple_hourly_logging.py
+│   └── test_error_taskgroup.py
 ├── plugins
 │   └── shell
 │       └── select_fruit.sh
 ├── .gitignore
 └── README.md
 
-7 directories, 19 files
+7 directories, 20 files
 ```
