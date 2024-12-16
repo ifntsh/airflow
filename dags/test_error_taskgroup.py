@@ -16,7 +16,6 @@ def success_test(**context):
 
 with DAG(
     dag_id="test_error_taskgroup",
-    dag_description = "Test Error Job",
     start_date=datetime(2024, 1, 1),
     schedule_interval="@daily",
     catchup=False
