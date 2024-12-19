@@ -1,7 +1,6 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta  # timedelta 임포트
 
 def extract_api():
     print("Extracting data from API...")
@@ -71,4 +70,12 @@ with DAG(
     )
 
     # DAG 의존성 설정
-    [extract_api_task, extract_file_task, extract_db_task] >> [transform_api_task, transform_file_task, transform_db_task] >> merge_and_load_task
+    extract_tasks = [extract_api_task, extract_file_task, extract_db_task]
+    transform_tasks = [transform_api_task, transform_file_task, transform_db_task]
+
+    # Extract 단계 >> Transform 단계
+    for extract_task, transform_task in zip(extract_tasks, transform_tasks):
+        extract_task >> transform_task
+
+    # Transform 단계 >> Merge and Load 단계
+    transform_tasks >> merge_and_load_task
