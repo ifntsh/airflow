@@ -1,6 +1,7 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
+from datetime import timedelta
 
 def extract_api():
     print("Extracting data from API...")
