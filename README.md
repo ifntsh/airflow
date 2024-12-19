@@ -14,6 +14,7 @@
 │   ├── dags_conn_test.py
 │   ├── dags_email_operator.py
 │   ├── dags_python_operator.py
+│   ├── elt_sales_pipeline.py
 │   ├── example_slack_webhook.py
 │   ├── hourly_slack_alert.py
 │   ├── kosis_test.py
@@ -29,5 +30,5 @@
 ├── .gitignore
 └── README.md
 
-7 directories, 21 files
+7 directories, 22 files
 ```
