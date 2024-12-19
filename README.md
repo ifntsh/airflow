@@ -19,6 +19,7 @@
 │   ├── kosis_test.py
 │   ├── kosis_to_bigquery.py
 │   ├── kosis_upload.py
+│   ├── parallel_data_processing.py
 │   ├── simple_daily_logging.py
 │   ├── simple_hourly_logging.py
 │   └── test_error_taskgroup.py
@@ -28,5 +29,5 @@
 ├── .gitignore
 └── README.md
 
-7 directories, 20 files
+7 directories, 21 files
 ```
