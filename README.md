@@ -23,12 +23,13 @@
 │   ├── parallel_data_processing.py
 │   ├── simple_daily_logging.py
 │   ├── simple_hourly_logging.py
-│   └── test_error_taskgroup.py
+│   ├── test_error_taskgroup.py
+│   └── variable_length_dynamic_mapping.py
 ├── plugins
 │   └── shell
 │       └── select_fruit.sh
 ├── .gitignore
 └── README.md
 
-7 directories, 22 files
+7 directories, 23 files
 ```
