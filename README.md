@@ -14,6 +14,7 @@
 │   ├── dags_conn_test.py
 │   ├── dags_email_operator.py
 │   ├── dags_python_operator.py
+│   ├── dynamic_mapping_example.py
 │   ├── elt_sales_pipeline.py
 │   ├── example_slack_webhook.py
 │   ├── hourly_slack_alert.py
@@ -23,8 +24,7 @@
 │   ├── parallel_data_processing.py
 │   ├── simple_daily_logging.py
 │   ├── simple_hourly_logging.py
-│   ├── test_error_taskgroup.py
-│   └── variable_length_dynamic_mapping.py
+│   └── test_error_taskgroup.py
 ├── plugins
 │   └── shell
 │       └── select_fruit.sh
